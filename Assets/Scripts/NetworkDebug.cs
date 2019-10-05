@@ -13,20 +13,22 @@ public class NetworkDebug : NetworkBehaviour
     public static UnityAction<string> Log;
     public static UnityAction<string> LogError;
 
-    private void Awake()
+    public void Awake()
     {
+        base.OnStartLocalPlayer();
+
         if (instance == null)
         {
-            instance = this;
-            DontDestroyOnLoad(gameObject);
+            instance = this;          
         }
         else
         {
             Destroy(gameObject);
         }
+        
 
-        Log += LogEditor;
-        LogError += LogErrorEditor;
+       Log += LogEditor;
+       LogError += LogErrorEditor;
     }
 
     private void OnDisable()

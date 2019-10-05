@@ -26,9 +26,9 @@ public class PlayerController : NetworkBehaviour
     [Command]
     public void CmdSetInfoOnServer(string namePlayer, string nameAvatar)
     {
-        CmdLog("CmdSetInfoOnServer name " + namePlayer + " avatar " + nameAvatar);
+        NetworkDebug.Log?.Invoke("CmdSetInfoOnServer name " + namePlayer + " avatar " + nameAvatar);
         PlayerInfo.SetPlayerName(namePlayer);
-        PlayerInfo.SetAvatar(nameAvatar);        
+        PlayerInfo.SetAvatar(nameAvatar);
         SpawnAvatar();
     }
 
@@ -37,11 +37,9 @@ public class PlayerController : NetworkBehaviour
         if (isLocalPlayer)
         {
             InitPlayerLocaly();
-
             PlayerSendData sendData = PlayerInfo.GetPlayerSendInfo();
-            CmdSetInfoOnServer(sendData.PlayerName, sendData.PlayerAvatar);   
-        }
-        
+            CmdSetInfoOnServer(sendData.PlayerName, sendData.PlayerAvatar);           
+        }        
     }
 
     
@@ -50,21 +48,33 @@ public class PlayerController : NetworkBehaviour
         PlayerSettings playerSettings = NetworkManager.singleton.gameObject.GetComponent<PlayerSettings>();
         PlayerInfo.SetPlayerName(playerSettings.PlayerName);
         PlayerInfo.SetAvatar(playerSettings.AvatarData);
-
-        CmdLog("name " + PlayerInfo.GetPlayerSendInfo().PlayerName + " avatar " + PlayerInfo.GetPlayerSendInfo().PlayerAvatar);
+        
+        NetworkDebug.Log?.Invoke("name " + PlayerInfo.GetPlayerSendInfo().PlayerName + " avatar " + PlayerInfo.GetPlayerSendInfo().PlayerAvatar);
     }
     
     private void SpawnAvatar()
     {
         spawnedPlayerAvatar = Instantiate(PlayerInfo.CurrentAvatarData.AvatarPrefab, transform.position, Quaternion.identity);
-        NetworkServer.Spawn(spawnedPlayerAvatar);
-        CmdLog(PlayerInfo.PlayerName + " joined as " + PlayerInfo.CurrentAvatarData.name);
-    }
+        NetworkServer.SpawnWithClientAuthority(spawnedPlayerAvatar,gameObject);
+        NetworkDebug.Log?.Invoke(PlayerInfo.PlayerName + " joined as " + PlayerInfo.CurrentAvatarData.name);        
+        RpcSetAvatar(spawnedPlayerAvatar);
+    }  
 
-    [Command]
-    private void CmdLog(string message)
+    [ClientRpc]
+    private void RpcSetAvatar(GameObject avatar)
     {
-        Debug.Log(message);
+        
+        spawnedPlayerAvatar = avatar;
+
+        if (isLocalPlayer)
+        {
+            UnityStandardAssets.Utility.FollowTarget camera = GameObject.FindObjectOfType<UnityStandardAssets.Utility.FollowTarget>();
+            camera.target = spawnedPlayerAvatar.transform;
+
+            spawnedPlayerAvatar.GetComponent<AvatarNetworkSetup>().enabled = true;
+        }
+
+        spawnedPlayerAvatar.GetComponent<NetworkAnimator>().SetParameterAutoSend(0, true);
     }
 
     private void OnDisable()

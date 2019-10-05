@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3570cdb6db5af2d4ebe43abff275141d, type: 3}
   m_Name: RobotAvatarData
   m_EditorClassIdentifier: 
-  avatarPrefab: {fileID: 8604663688859712057, guid: 4eb096320952c294788f8427266f722d,
+  avatarPrefab: {fileID: 3159263514631131610, guid: d0552f7c081d0ad408d74bd6bd6beca0,
     type: 3}

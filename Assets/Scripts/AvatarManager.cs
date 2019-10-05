@@ -25,9 +25,15 @@ public class AvatarManager : MonoBehaviour
         {
             return playerAvatars[avatarName];
         }
+        else if (playerAvatars.Count >0)
+        {
+            NetworkDebug.LogError("Avatar name: " + avatarName +" not found");
+            List<string> keys = new List<string>(playerAvatars.Keys);
+            return playerAvatars[keys[0]];
+        }
         else
         {
-           // NetworkDebug.LogError("Avatar name: " + avatarName +" not found");
+            NetworkDebug.LogError("Avatar Manager empty");
             return null;
         }
 
