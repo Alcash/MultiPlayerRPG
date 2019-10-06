@@ -37,27 +37,31 @@ public class NetworkDebug : NetworkBehaviour
         LogError -= LogErrorEditor;
     }
 
-    [Command]
-    private void CmdLog(string message)
+    [ClientRpc]
+    private void RpcLog(string message)
     {
+#if UNITY_EDITOR
         Debug.Log(message);
+#endif
     }
 
-    [Command]
-    private  void CmdLogError(string message)
+    [ClientRpc]
+    private  void RpcLogError(string message)
     {
+#if UNITY_EDITOR
         Debug.LogError(message);
+#endif
     }
-    
+
     private void LogEditor(string message)
     {
-        CmdLog(message);
+        RpcLog(message);
 
     }
     private  void LogErrorEditor(string message)
     {
 
-        CmdLogError(message);
+        RpcLogError(message);
 
     }
 }

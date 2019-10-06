@@ -23,6 +23,6 @@ public class GameNetworkManager : NetworkManager
 
     private void Start()
     {
-        Instantiate(spawnPrefabs[2], transform);
+        Instantiate(spawnPrefabs[0], transform);
     }
 }

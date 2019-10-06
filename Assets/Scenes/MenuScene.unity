@@ -193,7 +193,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_BoundingSphereOverride: {x: 1e-45, y: 0, z: 6.3e-44, w: 0}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
@@ -503,9 +503,10 @@ MonoBehaviour:
   m_OfflineScene: MenuScene
   m_OnlineScene: GameScene
   m_SpawnPrefabs:
+  - {fileID: 2966957421935643132, guid: 15401cf33849d6d4dad582092340d911, type: 3}
+  - {fileID: 1333711684159489403, guid: 5e3cac0dc712eac439685bdeccc841a8, type: 3}
   - {fileID: 3159263514631131610, guid: d0552f7c081d0ad408d74bd6bd6beca0, type: 3}
   - {fileID: 8092594296520286783, guid: dd6897f352c3a134e83148d9ed25db02, type: 3}
-  - {fileID: 2966957421935643132, guid: 15401cf33849d6d4dad582092340d911, type: 3}
   m_CustomConfig: 0
   m_MaxConnections: 4
   m_ConnectionConfig:

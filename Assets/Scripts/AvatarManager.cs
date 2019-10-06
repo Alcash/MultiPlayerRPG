@@ -21,16 +21,16 @@ public class AvatarManager : MonoBehaviour
 
     public static AvatarData GetAvatarDataByName(string avatarName)
     {
+        if((avatarName == "" || playerAvatars.ContainsKey(avatarName) == false) && playerAvatars.Count > 0)
+        {
+            List<string> keys = new List<string>(playerAvatars.Keys);
+            avatarName = keys[0];
+        }
+
         if (playerAvatars.ContainsKey(avatarName))
         {
             return playerAvatars[avatarName];
-        }
-        else if (playerAvatars.Count >0)
-        {
-            NetworkDebug.LogError("Avatar name: " + avatarName +" not found");
-            List<string> keys = new List<string>(playerAvatars.Keys);
-            return playerAvatars[keys[0]];
-        }
+        }       
         else
         {
             NetworkDebug.LogError("Avatar Manager empty");

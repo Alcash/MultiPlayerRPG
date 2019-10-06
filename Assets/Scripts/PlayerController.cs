@@ -4,10 +4,16 @@ using UnityEngine.Networking;
 /// <summary>
 /// Контроллер игрока
 /// </summary>
+[RequireComponent(typeof(UserControlInput))]
 public class PlayerController : NetworkBehaviour
 {
+    [SerializeField]    
+    private GameObject playerAvatar;
+
     [SerializeField]
     private PlayerInfo playerData;
+
+    private UserControlInput userControlInput;
 
     public PlayerInfo PlayerInfo
     {
@@ -16,20 +22,27 @@ public class PlayerController : NetworkBehaviour
             return playerData;
         }
     }
-
+    [SyncVar]
     private GameObject spawnedPlayerAvatar;
+
+    public GameObject GetSpawnedAvatar
+    {
+        get
+        {
+            return spawnedPlayerAvatar;
+        }
+    }
+    [SyncVar]
+    private GameObject spawnedPlayerPerson;
 
     /// <summary>
     /// Установка информации о игроке
     /// </summary>
     /// <param name="playerSettings"></param> 
     [Command]
-    public void CmdSetInfoOnServer(string namePlayer, string nameAvatar)
-    {
-        NetworkDebug.Log?.Invoke("CmdSetInfoOnServer name " + namePlayer + " avatar " + nameAvatar);
-        PlayerInfo.SetPlayerName(namePlayer);
-        PlayerInfo.SetAvatar(nameAvatar);
-        SpawnAvatar();
+    public void CmdSetInfoOnServer(string namePlayer)
+    {      
+        PlayerInfo.SetPlayerName(namePlayer);        
     }
 
     private void Start()
@@ -38,43 +51,70 @@ public class PlayerController : NetworkBehaviour
         {
             InitPlayerLocaly();
             PlayerSendData sendData = PlayerInfo.GetPlayerSendInfo();
-            CmdSetInfoOnServer(sendData.PlayerName, sendData.PlayerAvatar);           
-        }        
+
+            CmdSetInfoOnServer(PlayerInfo.PlayerName);
+
+            CmdSpawnAvatar(PlayerInfo.CurrentAvatarData.name);
+            userControlInput = GetComponent<UserControlInput>();
+        }   
     }
 
-    
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+
+        spawnedPlayerPerson.transform.SetParent(spawnedPlayerAvatar.transform);
+    }
+
     private void InitPlayerLocaly()
     {
         PlayerSettings playerSettings = NetworkManager.singleton.gameObject.GetComponent<PlayerSettings>();
         PlayerInfo.SetPlayerName(playerSettings.PlayerName);
         PlayerInfo.SetAvatar(playerSettings.AvatarData);
-        
-        NetworkDebug.Log?.Invoke("name " + PlayerInfo.GetPlayerSendInfo().PlayerName + " avatar " + PlayerInfo.GetPlayerSendInfo().PlayerAvatar);
     }
-    
-    private void SpawnAvatar()
+
+    [Command]
+    private void CmdSpawnAvatar(string avatarPersonName)
     {
-        spawnedPlayerAvatar = Instantiate(PlayerInfo.CurrentAvatarData.AvatarPrefab, transform.position, Quaternion.identity);
-        NetworkServer.SpawnWithClientAuthority(spawnedPlayerAvatar,gameObject);
-        NetworkDebug.Log?.Invoke(PlayerInfo.PlayerName + " joined as " + PlayerInfo.CurrentAvatarData.name);        
-        RpcSetAvatar(spawnedPlayerAvatar);
+        GameObject spawn = Instantiate(playerAvatar, transform.position, Quaternion.identity);      
+        NetworkServer.SpawnWithClientAuthority(spawn, gameObject);
+        spawnedPlayerAvatar = spawn;  
+        PlayerInfo.SetAvatar(avatarPersonName);
+        spawn = Instantiate(PlayerInfo.CurrentAvatarData.AvatarPrefab, spawnedPlayerAvatar.transform);              
+        NetworkServer.SpawnWithClientAuthority(spawn, gameObject);
+        spawnedPlayerPerson = spawn;
+
+        //spawnedPlayerPerson.transform.SetParent(spawnedPlayerAvatar.transform);
+
+        RpcSetAvatar(spawnedPlayerAvatar, spawnedPlayerPerson);
     }  
 
     [ClientRpc]
-    private void RpcSetAvatar(GameObject avatar)
-    {
-        
+    private void RpcSetAvatar(GameObject avatar, GameObject avatarPerson)
+    {        
         spawnedPlayerAvatar = avatar;
+        spawnedPlayerPerson = avatarPerson;
+
+        spawnedPlayerPerson.transform.SetParent(spawnedPlayerAvatar.transform);
 
         if (isLocalPlayer)
         {
             UnityStandardAssets.Utility.FollowTarget camera = GameObject.FindObjectOfType<UnityStandardAssets.Utility.FollowTarget>();
             camera.target = spawnedPlayerAvatar.transform;
 
-            spawnedPlayerAvatar.GetComponent<AvatarNetworkSetup>().enabled = true;
-        }
+            AvatarControl avatarControl = spawnedPlayerAvatar.GetComponent<AvatarControl>();
+            if (avatarControl != null)
+            {               
+                userControlInput.SetAvatarControl(avatarControl);
+                avatarControl.SetAvatarPerson(spawnedPlayerPerson);                
+            }
+        }     
+    }   
 
-        spawnedPlayerAvatar.GetComponent<NetworkAnimator>().SetParameterAutoSend(0, true);
+    [Command]
+    private void CmdSetParent()
+    {
+        spawnedPlayerPerson.transform.SetParent(spawnedPlayerAvatar.transform);
     }
 
     private void OnDisable()
