@@ -9,17 +9,20 @@ using UnityEngine.Networking;
 [RequireComponent(typeof(PlayerSettings))]
 public class GameNetworkManager : NetworkManager
 {
-    private PlayerSettings playerSettings;
-
-    private void Awake()
-    {
-        playerSettings = GetComponent<PlayerSettings>();
-    }
-
     public override void OnServerAddPlayer(NetworkConnection conn, short playerControllerId)
     {
         base.OnServerAddPlayer(conn, playerControllerId);               
     }
 
-   
+    public override void OnStartClient(NetworkClient client)
+    {
+        base.OnStartClient(client);
+
+        
+    }
+
+    private void Start()
+    {
+        Instantiate(spawnPrefabs[0], transform);
+    }
 }

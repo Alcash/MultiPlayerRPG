@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3570cdb6db5af2d4ebe43abff275141d, type: 3}
   m_Name: UnityChanAvatarData
   m_EditorClassIdentifier: 
-  avatarPrefab: {fileID: 8612403349605825486, guid: 309a88e46201b8e46bc25de602305ecc,
+  avatarPrefab: {fileID: 8092594296520286783, guid: dd6897f352c3a134e83148d9ed25db02,
     type: 3}
