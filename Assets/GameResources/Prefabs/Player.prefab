@@ -47,9 +47,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerAvatar: {fileID: 1333711684159489403, guid: 5e3cac0dc712eac439685bdeccc841a8,
     type: 3}
-  playerData:
-    currentAvatarData: {fileID: 11400000, guid: bf92368d28c34bd41b12e1afebc6d743,
-      type: 2}
+  playerName: 
+  avatarData: {fileID: 11400000, guid: bf92368d28c34bd41b12e1afebc6d743, type: 2}
 --- !u!114 &1850840315586486274
 MonoBehaviour:
   m_ObjectHideFlags: 0
