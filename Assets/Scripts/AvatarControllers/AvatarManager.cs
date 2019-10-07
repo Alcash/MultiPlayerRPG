@@ -21,15 +21,20 @@ public class AvatarManager : MonoBehaviour
 
     public static AvatarData GetAvatarDataByName(string avatarName)
     {
+        Debug.Log("avatarName " + avatarName);
+
         if((avatarName == "" || playerAvatars.ContainsKey(avatarName) == false) && playerAvatars.Count > 0)
         {
             List<string> keys = new List<string>(playerAvatars.Keys);
             avatarName = keys[0];
+
+            Debug.Log("avatarName 1" + avatarName);
         }
 
         if (playerAvatars.ContainsKey(avatarName))
         {
-            return playerAvatars[avatarName];
+            Debug.Log("avatarName 2" + avatarName);
+            return playerAvatars[avatarName];            
         }       
         else
         {

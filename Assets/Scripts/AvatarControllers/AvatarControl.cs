@@ -23,8 +23,10 @@ public class AvatarControl : NetworkBehaviour
     [SerializeField]
     private float moveSpeedMultiplier = 3f;
 
+    [SyncVar]
     private float turnAmount;
-     float forwardAmount;
+    [SyncVar]
+    private float forwardAmount;
 
     /// <summary>
     /// Установка направления движения
@@ -105,37 +107,16 @@ public class AvatarControl : NetworkBehaviour
 
     private void Start()
     {       
-        avatarRigidbody = GetComponent<Rigidbody>();  
-    }
+        avatarRigidbody = GetComponent<Rigidbody>();
 
-    
-
-    /* [Command]
-     private void CmdSpawnPerson(string avatarPersonName)
-     {
-         spawnedPlayerPerson = Instantiate(PlayerInfo.CurrentAvatarData.AvatarPrefab, transform);
-
-         NetworkServer.SpawnWithClientAuthority(spawnedPlayerPerson);
-     }*/
-
-    private void ApplyExtraTurnRotation()
-    {
-        // help the character turn faster (this is in addition to root rotation in the animation)
-        // float turnSpeed = Mathf.Lerp(stationaryTurnSpeed, movingTurnSpeed, forwardAmount);
-       
-    }
-
-    public void OnAnimatorMove()
-    {
-        // we implement this function to override the default root motion.
-        // this allows us to modify the positional speed before it's applied.
-        if (Time.fixedDeltaTime > 0 && avatarAnimator != null)
+        if(transform.childCount > 0)
         {
-            Vector3 v = (avatarAnimator.deltaPosition * moveSpeedMultiplier) / Time.fixedDeltaTime;
-
-            // we preserve the existing y part of the current velocity.
-            v.y = avatarRigidbody.velocity.y;
-            avatarRigidbody.velocity = v;
+            avatarPerson = transform.GetChild(0).gameObject;
         }
-    }
+
+        if (avatarAnimator == null)
+        {
+            avatarAnimator = avatarPerson.GetComponent<Animator>();
+        }
+    }  
 }

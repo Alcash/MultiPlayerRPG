@@ -8,20 +8,16 @@ using UnityEngine.Networking;
 public class PlayerController : NetworkBehaviour
 {
     [SerializeField]    
-    private GameObject playerAvatar;
+    private GameObject playerAvatar;   
 
     [SerializeField]
-    private PlayerInfo playerData;
+    private string playerName;
+
+    [SerializeField]
+    private AvatarData avatarData;
 
     private UserControlInput userControlInput;
-
-    public PlayerInfo PlayerInfo
-    {
-        get
-        {
-            return playerData;
-        }
-    }
+  
     [SyncVar]
     private GameObject spawnedPlayerAvatar;
 
@@ -33,28 +29,14 @@ public class PlayerController : NetworkBehaviour
         }
     }
     [SyncVar]
-    private GameObject spawnedPlayerPerson;
-
-    /// <summary>
-    /// Установка информации о игроке
-    /// </summary>
-    /// <param name="playerSettings"></param> 
-    [Command]
-    public void CmdSetInfoOnServer(string namePlayer)
-    {      
-        PlayerInfo.SetPlayerName(namePlayer);        
-    }
+    private GameObject spawnedPlayerPerson;   
 
     private void Start()
     {       
         if (isLocalPlayer)
         {
-            InitPlayerLocaly();
-            PlayerSendData sendData = PlayerInfo.GetPlayerSendInfo();
-
-            CmdSetInfoOnServer(PlayerInfo.PlayerName);
-
-            CmdSpawnAvatar(PlayerInfo.CurrentAvatarData.name);
+            InitPlayerLocaly();     
+            CmdSpawnAvatar(avatarData.name);
             userControlInput = GetComponent<UserControlInput>();
         }   
     }
@@ -69,8 +51,18 @@ public class PlayerController : NetworkBehaviour
     private void InitPlayerLocaly()
     {
         PlayerSettings playerSettings = NetworkManager.singleton.gameObject.GetComponent<PlayerSettings>();
-        PlayerInfo.SetPlayerName(playerSettings.PlayerName);
-        PlayerInfo.SetAvatar(playerSettings.AvatarData);
+        if(playerSettings == null)
+        {
+            return;
+        }
+        if (playerSettings.PlayerName != "")
+        {
+            playerName = playerSettings.PlayerName;
+        }
+        if (playerSettings.AvatarData != null)
+        {
+            avatarData = playerSettings.AvatarData;
+        }
     }
 
     [Command]
@@ -79,8 +71,8 @@ public class PlayerController : NetworkBehaviour
         GameObject spawn = Instantiate(playerAvatar, transform.position, Quaternion.identity);      
         NetworkServer.SpawnWithClientAuthority(spawn, gameObject);
         spawnedPlayerAvatar = spawn;  
-        PlayerInfo.SetAvatar(avatarPersonName);
-        spawn = Instantiate(PlayerInfo.CurrentAvatarData.AvatarPrefab, spawnedPlayerAvatar.transform);              
+        avatarData = AvatarManager.GetAvatarDataByName(avatarPersonName);
+        spawn = Instantiate(avatarData.AvatarPrefab, spawnedPlayerAvatar.transform);              
         NetworkServer.SpawnWithClientAuthority(spawn, gameObject);
         spawnedPlayerPerson = spawn;
 
