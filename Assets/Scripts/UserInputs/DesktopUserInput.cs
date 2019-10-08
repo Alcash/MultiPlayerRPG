@@ -12,7 +12,7 @@ public class DesktopUserInput : MonoBehaviour , IUserInput
     public Vector2 GetAttackDirection()
     {
         Vector2 result = Vector2.zero;
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButton(0))
         { 
             //От центра экрана в сторону где курсор  
             float heightCenter = Screen.height / 2;

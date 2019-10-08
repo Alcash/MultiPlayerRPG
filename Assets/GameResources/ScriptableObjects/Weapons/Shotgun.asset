@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c62a5c4fec3fdd14397315316bb92802, type: 3}
   m_Name: Shotgun
   m_EditorClassIdentifier: 
-  nameWeapon: default
-  modelPrefab: {fileID: 0}
+  nameWeapon: Shotgun
+  modelPrefab: {fileID: 2310641069395039477, guid: 617eb5fc34a7433469c07cca5abdc65d,
+    type: 3}
   damageWeapon: 3
   rangeAttack: 3
   attackSector: 90

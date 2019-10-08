@@ -28,6 +28,11 @@ public class AvatarControl : NetworkBehaviour
     [SyncVar]
     private float forwardAmount;
 
+    private PersonInfo personInfo;
+
+    [SerializeField]
+    private WeaponData defaultWeapon;
+
     /// <summary>
     /// Установка направления движения
     /// </summary>
@@ -71,7 +76,9 @@ public class AvatarControl : NetworkBehaviour
     /// <param name="shoot"></param>
     public void SetShoot(Vector2 direction, bool shoot)
     {
-        if(shoot && direction == Vector2.zero)
+
+        avatarAnimator.SetBool("Aiming", shoot == false && direction != Vector2.zero);
+        if (shoot && direction == Vector2.zero)
         {
             Debug.Log("near Shoot");
         }
@@ -83,7 +90,8 @@ public class AvatarControl : NetworkBehaviour
 
         if (shoot == false && direction != Vector2.zero)
         {
-            Debug.Log("aiming");
+           
+            Debug.Log("Aiming");
         }
 
         if (shoot == false && direction == Vector2.zero)
@@ -118,5 +126,9 @@ public class AvatarControl : NetworkBehaviour
         {
             avatarAnimator = avatarPerson.GetComponent<Animator>();
         }
+
+        personInfo = avatarPerson.GetComponent<PersonInfo>();
+
+        GameObject weapon = Instantiate(WeaponManager.GetWeaponData(defaultWeapon.NameWeapon).ModelPrefab, personInfo.SocketWeapon.transform);
     }  
 }

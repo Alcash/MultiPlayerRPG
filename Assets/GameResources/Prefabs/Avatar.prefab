@@ -51,6 +51,7 @@ MonoBehaviour:
   movingTurnSpeed: 360
   stationaryTurnSpeed: 180
   moveSpeedMultiplier: 3
+  defaultWeapon: {fileID: 11400000, guid: 8610a7633e4c9eb44ab5c81b5cc95e93, type: 2}
 --- !u!114 &6753703398882302244
 MonoBehaviour:
   m_ObjectHideFlags: 0
