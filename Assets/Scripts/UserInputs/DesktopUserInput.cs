@@ -45,6 +45,6 @@ public class DesktopUserInput : MonoBehaviour , IUserInput
     /// <returns></returns>
     public bool GetShoot()
     {
-        return Input.GetKey(KeyCode.Space);
+        return Input.GetKeyUp(KeyCode.Space) || Input.GetMouseButtonUp(0);
     }
 }

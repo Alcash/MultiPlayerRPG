@@ -77,21 +77,41 @@ public class AvatarControl : NetworkBehaviour
     public void SetShoot(Vector2 direction, bool shoot)
     {
 
+
         avatarAnimator.SetBool("Aiming", shoot == false && direction != Vector2.zero);
-        if (shoot && direction == Vector2.zero)
-        {
-            Debug.Log("near Shoot");
-        }
 
         if (shoot && direction != Vector2.zero)
         {
-            Debug.Log("direction Shoot");
+            avatarAnimator.SetTrigger("Shoot");
+            Debug.Log("Aimming shoot");
         }
 
         if (shoot == false && direction != Vector2.zero)
         {
-           
-            Debug.Log("Aiming");
+
+            avatarAnimator.SetBool("Aiming", shoot == false && direction != Vector2.zero);
+
+            Vector3 vector = new Vector3(direction.x, 0, direction.y);
+
+            vector = transform.InverseTransformDirection(vector);
+            vector = Vector3.ProjectOnPlane(vector, Vector3.up);
+
+            turnAmount = Mathf.Atan2(vector.x, vector.z);
+
+           // turnAmount -= Mathf.Atan2(transform.forward.x, transform.forward.z);
+
+            Debug.Log("direction " + vector);
+            Debug.Log("turnAmount " + turnAmount);
+            transform.Rotate(0, turnAmount * movingTurnSpeed * Time.deltaTime, 0);           
+
+            avatarAnimator.SetFloat("Turn", turnAmount, 0.1f, Time.fixedDeltaTime);
+            Debug.Log("Aimming");
+        }
+
+        if (shoot && direction == Vector2.zero)
+        {
+            avatarAnimator.SetTrigger("Shoot");
+            Debug.Log("Shoot near");
         }
 
         if (shoot == false && direction == Vector2.zero)

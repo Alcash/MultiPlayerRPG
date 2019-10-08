@@ -11,6 +11,8 @@ public class UserControlInput : MonoBehaviour
 
     private AvatarControl avatarControl;
 
+    private Vector2 directionShoot;
+
     public void SetAvatarControl(AvatarControl _avatarControl)
     {
         avatarControl = _avatarControl;
@@ -30,11 +32,11 @@ public class UserControlInput : MonoBehaviour
         }
         Vector2 movement = userInput.GetMovement();
         bool shootOnce = userInput.GetShoot();
-        Vector2 directionShoot = userInput.GetAttackDirection();
-
-        avatarControl.SetMovement(movement);
 
         avatarControl.SetShoot(directionShoot, shootOnce);
+        avatarControl.SetMovement(movement);
+
+        directionShoot = userInput.GetAttackDirection();
     }
 
     private void Start()
