@@ -1656,8 +1656,8 @@ GameObject:
   - component: {fileID: 3159263514631556154}
   - component: {fileID: 11050515903041722}
   - component: {fileID: 361108287439873145}
-  - component: {fileID: 7807413108844549148}
   - component: {fileID: 3476707546135293905}
+  - component: {fileID: 1337331069510071482}
   m_Layer: 0
   m_Name: Robot Kyle (1)
   m_TagString: Untagged
@@ -1733,7 +1733,20 @@ MonoBehaviour:
     i15: 0
   m_ServerOnly: 0
   m_LocalPlayerAuthority: 1
---- !u!114 &7807413108844549148
+--- !u!114 &3476707546135293905
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3159263514631131610}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf311691a3d46334199e4eacf1480c47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  socketWeapon: {fileID: 1981184779368611698}
+--- !u!114 &1337331069510071482
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1753,19 +1766,6 @@ MonoBehaviour:
   param3: 
   param4: 
   param5: 
---- !u!114 &3476707546135293905
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3159263514631131610}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cf311691a3d46334199e4eacf1480c47, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  socketWeapon: {fileID: 1981184779368611698}
 --- !u!1 &3159263514631131614
 GameObject:
   m_ObjectHideFlags: 0

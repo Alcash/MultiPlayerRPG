@@ -8,13 +8,15 @@ using UnityEngine.Networking;
 /// Контроллер действий аватара
 /// </summary>
 [RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(AnimatorController))]
 public class AvatarControl : NetworkBehaviour
 {   
     private GameObject avatarPerson;
     private Rigidbody avatarRigidbody;
 
-    [SerializeField]
-    private Animator avatarAnimator;
+
+    private AnimatorController animatorController;
+
 
     [SerializeField]
     private float movingTurnSpeed = 360;
@@ -33,6 +35,8 @@ public class AvatarControl : NetworkBehaviour
     [SerializeField]
     private WeaponData defaultWeapon;
 
+    private BaseWeaponController weaponController;
+
     /// <summary>
     /// Установка направления движения
     /// </summary>
@@ -50,11 +54,11 @@ public class AvatarControl : NetworkBehaviour
         move3d = Vector3.ProjectOnPlane(move3d, Vector3.up);
 
         forwardAmount = 0;
-       
+
 
         if (move3d.magnitude > 0.01)
-        {       
-            turnAmount = Mathf.Atan2(-move3d.x, -move3d.z);    
+        {
+            turnAmount = Mathf.Atan2(-move3d.x, -move3d.z);
             transform.Rotate(0, turnAmount * movingTurnSpeed * Time.deltaTime, 0);
 
             forwardAmount = move3d.magnitude;
@@ -62,11 +66,9 @@ public class AvatarControl : NetworkBehaviour
 
         avatarRigidbody.velocity = transform.forward * forwardAmount * moveSpeedMultiplier;
 
-        if (avatarAnimator)
-        {
-            avatarAnimator.SetFloat("Forward", forwardAmount, 0.1f, Time.fixedDeltaTime);
-            avatarAnimator.SetFloat("Turn", turnAmount, 0.1f, Time.fixedDeltaTime);
-        }
+        animatorController.SetFloat("Forward", forwardAmount, 0.1f, Time.fixedDeltaTime);
+        animatorController.SetFloat("Turn", turnAmount, 0.1f, Time.fixedDeltaTime);
+
     }
 
     /// <summary>
@@ -76,20 +78,18 @@ public class AvatarControl : NetworkBehaviour
     /// <param name="shoot"></param>
     public void SetShoot(Vector2 direction, bool shoot)
     {
-
-
-        avatarAnimator.SetBool("Aiming", shoot == false && direction != Vector2.zero);
+        animatorController.SetBool("Aiming", shoot == false && direction != Vector2.zero);
 
         if (shoot && direction != Vector2.zero)
         {
-            avatarAnimator.SetTrigger("Shoot");
-            Debug.Log("Aimming shoot");
+            animatorController.SetTrigger("Shoot");
+            weaponController?.Shoot();            
         }
 
         if (shoot == false && direction != Vector2.zero)
         {
 
-            avatarAnimator.SetBool("Aiming", shoot == false && direction != Vector2.zero);
+            animatorController.SetBool("Aiming", shoot == false && direction != Vector2.zero);
 
             Vector3 vector = new Vector3(direction.x, 0, direction.y);
 
@@ -98,20 +98,16 @@ public class AvatarControl : NetworkBehaviour
 
             turnAmount = Mathf.Atan2(vector.x, vector.z);
 
-           // turnAmount -= Mathf.Atan2(transform.forward.x, transform.forward.z);
+            transform.Rotate(0, turnAmount * movingTurnSpeed * Time.deltaTime, 0);
 
-            Debug.Log("direction " + vector);
-            Debug.Log("turnAmount " + turnAmount);
-            transform.Rotate(0, turnAmount * movingTurnSpeed * Time.deltaTime, 0);           
-
-            avatarAnimator.SetFloat("Turn", turnAmount, 0.1f, Time.fixedDeltaTime);
-            Debug.Log("Aimming");
+            animatorController.SetFloat("Turn", turnAmount, 0.1f, Time.fixedDeltaTime);
         }
 
         if (shoot && direction == Vector2.zero)
         {
-            avatarAnimator.SetTrigger("Shoot");
-            Debug.Log("Shoot near");
+            animatorController.SetTrigger("Shoot");
+            weaponController?.Shoot();
+            CmdNetShoot();
         }
 
         if (shoot == false && direction == Vector2.zero)
@@ -120,35 +116,41 @@ public class AvatarControl : NetworkBehaviour
         }
     }
     
+    [Command]
+    private void CmdNetShoot()
+    {
+        weaponController?.Shoot();
+    }
+
     /// <summary>
     /// Указание Обличия аватара
     /// </summary>
     /// <param name="person"></param>
     public void SetAvatarPerson(GameObject person)
     {
-        avatarPerson = person;        
-        if (avatarAnimator == null)
-        {
-            avatarAnimator = avatarPerson.GetComponent<Animator>();
-        }
-    }   
+        avatarPerson = person;       
+    }
+
+    private void Awake()
+    {
+        avatarRigidbody = GetComponent<Rigidbody>();
+        animatorController = GetComponent<AnimatorController>();
+    }
 
     private void Start()
-    {       
-        avatarRigidbody = GetComponent<Rigidbody>();
-
-        if(transform.childCount > 0)
+    {             
+        if (transform.childCount > 0)
         {
             avatarPerson = transform.GetChild(0).gameObject;
         }
 
-        if (avatarAnimator == null)
-        {
-            avatarAnimator = avatarPerson.GetComponent<Animator>();
-        }
+        animatorController.InitAnimator();
 
         personInfo = avatarPerson.GetComponent<PersonInfo>();
 
         GameObject weapon = Instantiate(WeaponManager.GetWeaponData(defaultWeapon.NameWeapon).ModelPrefab, personInfo.SocketWeapon.transform);
+
+        weaponController = weapon.GetComponent<BaseWeaponController>();
+        weaponController.InitWeapon(defaultWeapon, this);
     }  
 }
