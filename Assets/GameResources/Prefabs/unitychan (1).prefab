@@ -1,5 +1,35 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3804246046032774514
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 89763835267571594}
+  m_Layer: 0
+  m_Name: Weeapon Socket
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &89763835267571594
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3804246046032774514}
+  m_LocalRotation: {x: 0.11481936, y: -0.59724134, z: -0.017279707, w: 0.7936125}
+  m_LocalPosition: {x: -0.119, y: 0.013, z: -0.032}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 8092594296520588813}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 9.3, y: -74.71, z: -9.6}
 --- !u!1 &8092594296520286721
 GameObject:
   m_ObjectHideFlags: 0
@@ -1506,6 +1536,7 @@ GameObject:
   - component: {fileID: 8092594296527573087}
   - component: {fileID: 7185560936893065039}
   - component: {fileID: 619174616563550870}
+  - component: {fileID: 7793258474272991837}
   m_Layer: 0
   m_Name: unitychan (1)
   m_TagString: Untagged
@@ -1540,7 +1571,7 @@ Animator:
   m_GameObject: {fileID: 8092594296520286783}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 8f0565f23a2b58541a475bd3c1393052, type: 3}
-  m_Controller: {fileID: 9100000, guid: e2cf68ff4b1ffda45a77f7307dd789b9, type: 2}
+  m_Controller: {fileID: 9100000, guid: a2a7bfe3893029042b919c850aa09fe9, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -1595,13 +1626,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Animator: {fileID: 8092594296527573087}
-  m_ParameterSendBits: 3
+  m_ParameterSendBits: 195
   param0: 
   param1: 
   param2: 
   param3: 
   param4: 
   param5: 
+--- !u!114 &7793258474272991837
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8092594296520286783}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf311691a3d46334199e4eacf1480c47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  socketWeapon: {fileID: 3804246046032774514}
 --- !u!1 &8092594296520286785
 GameObject:
   m_ObjectHideFlags: 0
@@ -2478,6 +2522,7 @@ Transform:
   - {fileID: 8092594296520589227}
   - {fileID: 8092594296520589273}
   - {fileID: 8092594296520588827}
+  - {fileID: 89763835267571594}
   m_Father: {fileID: 8092594296520588805}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
