@@ -9,6 +9,7 @@ using UnityEngine.Networking;
 /// </summary>
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(AnimatorController))]
+[RequireComponent(typeof(AvatarWeaponController))]
 public class AvatarControl : NetworkBehaviour
 {   
     private GameObject avatarPerson;
@@ -16,7 +17,7 @@ public class AvatarControl : NetworkBehaviour
 
 
     private AnimatorController animatorController;
-
+    private AvatarWeaponController avatarWeaponController;
 
     [SerializeField]
     private float movingTurnSpeed = 360;
@@ -32,10 +33,7 @@ public class AvatarControl : NetworkBehaviour
 
     private PersonInfo personInfo;
 
-    [SerializeField]
-    private WeaponData defaultWeapon;
-
-    private BaseWeaponController weaponController;
+  
 
     /// <summary>
     /// Установка направления движения
@@ -83,7 +81,7 @@ public class AvatarControl : NetworkBehaviour
         if (shoot && direction != Vector2.zero)
         {
             animatorController.SetTrigger("Shoot");
-            weaponController?.Shoot();            
+            avatarWeaponController.Shoot();            
         }
 
         if (shoot == false && direction != Vector2.zero)
@@ -106,20 +104,13 @@ public class AvatarControl : NetworkBehaviour
         if (shoot && direction == Vector2.zero)
         {
             animatorController.SetTrigger("Shoot");
-            weaponController?.Shoot();
-            CmdNetShoot();
+            avatarWeaponController.Shoot();          
         }
 
         if (shoot == false && direction == Vector2.zero)
         {
            
         }
-    }
-    
-    [Command]
-    private void CmdNetShoot()
-    {
-        weaponController?.Shoot();
     }
 
     /// <summary>
@@ -135,6 +126,7 @@ public class AvatarControl : NetworkBehaviour
     {
         avatarRigidbody = GetComponent<Rigidbody>();
         animatorController = GetComponent<AnimatorController>();
+        avatarWeaponController = GetComponent<AvatarWeaponController>();
     }
 
     private void Start()
@@ -148,9 +140,6 @@ public class AvatarControl : NetworkBehaviour
 
         personInfo = avatarPerson.GetComponent<PersonInfo>();
 
-        GameObject weapon = Instantiate(WeaponManager.GetWeaponData(defaultWeapon.NameWeapon).ModelPrefab, personInfo.SocketWeapon.transform);
-
-        weaponController = weapon.GetComponent<BaseWeaponController>();
-        weaponController.InitWeapon(defaultWeapon, this);
+        avatarWeaponController.Init(personInfo);
     }  
 }

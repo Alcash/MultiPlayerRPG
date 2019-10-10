@@ -16,6 +16,7 @@ public class AnimatorController : MonoBehaviour
         {
             avatarAnimator = gameObject.GetComponentInChildren<Animator>();
             networkAnimator = gameObject.GetComponentInChildren<NetworkAnimator>();
+            networkAnimator.SetParameterAutoSend(3, true);
         }        
     }
 

@@ -10,7 +10,7 @@ public abstract class BaseWeaponController : MonoBehaviour
 
     protected WeaponData weaponData;
 
-    protected AvatarControl avatarOwner;
+    protected AvatarWeaponController avatarOwner;
 
     protected GameObject fxEffect;
 
@@ -19,7 +19,7 @@ public abstract class BaseWeaponController : MonoBehaviour
     /// </summary>
     /// <param name="_weaponData">Дата оружия</param>
     /// <param name="_owner">Хозяин оружия</param>
-    public void InitWeapon(WeaponData _weaponData, AvatarControl _owner)
+    public void InitWeapon(WeaponData _weaponData, AvatarWeaponController _owner)
     {
         avatarOwner = _owner;
         weaponData = _weaponData;
