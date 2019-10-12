@@ -4,7 +4,7 @@ using UnityEngine;
 
 
 /// <summary>
-/// Контроллер оружия
+/// Контроллер дробовика
 /// </summary>
 public class ShotgunWeaponController : BaseWeaponController
 {  

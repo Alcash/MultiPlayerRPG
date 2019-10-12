@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
+/// <summary>
+/// Контроллер оружия аватара
+/// </summary>
 public class AvatarWeaponController : NetworkBehaviour
 {
     [SerializeField]
