@@ -47,6 +47,7 @@ public class AvatarControl : NetworkBehaviour
     /// <param name="move"></param>
     public void SetMovement(Vector2 move)
     {
+
         Vector3 move3d = new Vector3(move.x, 0, move.y);
 
         if (move3d.magnitude > 1f)
