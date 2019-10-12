@@ -22,11 +22,10 @@ public class ShotgunWeaponController : BaseWeaponController
             var angle = Vector3.Angle(transform.forward, vector3ToEnemy);
             if (angle < weaponData.AttackSector / 2 && enemy != null)
             {
-                Debug.Log(enemyCollider[i].name, enemyCollider[i].gameObject);
-                Debug.DrawLine(transform.position, enemyCollider[i].transform.position, Color.red);
+               
                 enemyList.Add(enemy);               
                 
-                CombatSystem.CalculateDamage(enemy, new HitData(weaponData.DamageWeapon));
+                CombatSystem.CalculateDamage(enemy, hitData);
             }
         }
     }

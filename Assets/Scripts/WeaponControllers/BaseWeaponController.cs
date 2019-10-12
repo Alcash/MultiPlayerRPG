@@ -14,6 +14,8 @@ public abstract class BaseWeaponController : MonoBehaviour
 
     protected GameObject fxEffect;
 
+    protected HitData hitData;
+
     /// <summary>
     /// Инициализация оружия
     /// </summary>
@@ -31,6 +33,8 @@ public abstract class BaseWeaponController : MonoBehaviour
                 fxEffect = socketBullet.GetChild(0).gameObject;
             }
         }
+
+        hitData = new HitData(weaponData.DamageWeapon, avatarOwner);
     }
 
     /// <summary>
