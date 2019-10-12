@@ -10,16 +10,18 @@ public abstract class BaseWeaponController : MonoBehaviour
 
     protected WeaponData weaponData;
 
-    protected AvatarControl avatarOwner;
+    protected AvatarWeaponController avatarOwner;
 
     protected GameObject fxEffect;
+
+    protected HitData hitData;
 
     /// <summary>
     /// Инициализация оружия
     /// </summary>
     /// <param name="_weaponData">Дата оружия</param>
     /// <param name="_owner">Хозяин оружия</param>
-    public void InitWeapon(WeaponData _weaponData, AvatarControl _owner)
+    public void InitWeapon(WeaponData _weaponData, AvatarWeaponController _owner)
     {
         avatarOwner = _owner;
         weaponData = _weaponData;
@@ -31,6 +33,8 @@ public abstract class BaseWeaponController : MonoBehaviour
                 fxEffect = socketBullet.GetChild(0).gameObject;
             }
         }
+
+        hitData = new HitData(weaponData.DamageWeapon, avatarOwner);
     }
 
     /// <summary>

@@ -9,13 +9,20 @@ using UnityEngine.Networking;
 /// </summary>
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(AnimatorController))]
+[RequireComponent(typeof(AvatarWeaponController))]
+[RequireComponent(typeof(HealthController))]
+[RequireComponent(typeof(Collider))]
 public class AvatarControl : NetworkBehaviour
-{   
+{
+
+    public UnityAction OnDefeat;
     private GameObject avatarPerson;
     private Rigidbody avatarRigidbody;
-
+    private Collider avatarCollider;
 
     private AnimatorController animatorController;
+    private AvatarWeaponController avatarWeaponController;
+    private HealthController avatarHealthController;
 
 
     [SerializeField]
@@ -32,10 +39,7 @@ public class AvatarControl : NetworkBehaviour
 
     private PersonInfo personInfo;
 
-    [SerializeField]
-    private WeaponData defaultWeapon;
-
-    private BaseWeaponController weaponController;
+  
 
     /// <summary>
     /// Установка направления движения
@@ -83,7 +87,7 @@ public class AvatarControl : NetworkBehaviour
         if (shoot && direction != Vector2.zero)
         {
             animatorController.SetTrigger("Shoot");
-            weaponController?.Shoot();            
+            avatarWeaponController.Shoot();            
         }
 
         if (shoot == false && direction != Vector2.zero)
@@ -106,20 +110,13 @@ public class AvatarControl : NetworkBehaviour
         if (shoot && direction == Vector2.zero)
         {
             animatorController.SetTrigger("Shoot");
-            weaponController?.Shoot();
-            CmdNetShoot();
+            avatarWeaponController.Shoot();          
         }
 
         if (shoot == false && direction == Vector2.zero)
         {
            
         }
-    }
-    
-    [Command]
-    private void CmdNetShoot()
-    {
-        weaponController?.Shoot();
     }
 
     /// <summary>
@@ -135,6 +132,10 @@ public class AvatarControl : NetworkBehaviour
     {
         avatarRigidbody = GetComponent<Rigidbody>();
         animatorController = GetComponent<AnimatorController>();
+        avatarWeaponController = GetComponent<AvatarWeaponController>();
+        avatarCollider = GetComponent<Collider>();
+        avatarHealthController = GetComponent<HealthController>();
+        avatarHealthController.OnDead += OnDeath;
     }
 
     private void Start()
@@ -147,10 +148,26 @@ public class AvatarControl : NetworkBehaviour
         animatorController.InitAnimator();
 
         personInfo = avatarPerson.GetComponent<PersonInfo>();
-
-        GameObject weapon = Instantiate(WeaponManager.GetWeaponData(defaultWeapon.NameWeapon).ModelPrefab, personInfo.SocketWeapon.transform);
-
-        weaponController = weapon.GetComponent<BaseWeaponController>();
-        weaponController.InitWeapon(defaultWeapon, this);
+        avatarWeaponController.Init(personInfo);       
     }  
+
+
+    private void OnDeath()
+    {
+        animatorController.SetBool("Death", true);
+        animatorController.SetTrigger("Dying");
+
+        avatarCollider.enabled = false;
+        OnDefeat?.Invoke();
+    }
+
+    /// <summary>
+    /// Возрождение
+    /// </summary>
+    public void Revive()
+    {
+        animatorController.SetBool("Death", false);      
+
+        avatarCollider.enabled = true;
+    }
 }
