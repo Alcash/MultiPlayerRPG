@@ -10,14 +10,20 @@ using UnityEngine.Networking;
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(AnimatorController))]
 [RequireComponent(typeof(AvatarWeaponController))]
+[RequireComponent(typeof(HealthController))]
+[RequireComponent(typeof(Collider))]
 public class AvatarControl : NetworkBehaviour
-{   
+{
+
+    public UnityAction OnDefeat;
     private GameObject avatarPerson;
     private Rigidbody avatarRigidbody;
-
+    private Collider avatarCollider;
 
     private AnimatorController animatorController;
     private AvatarWeaponController avatarWeaponController;
+    private HealthController avatarHealthController;
+
 
     [SerializeField]
     private float movingTurnSpeed = 360;
@@ -127,6 +133,9 @@ public class AvatarControl : NetworkBehaviour
         avatarRigidbody = GetComponent<Rigidbody>();
         animatorController = GetComponent<AnimatorController>();
         avatarWeaponController = GetComponent<AvatarWeaponController>();
+        avatarCollider = GetComponent<Collider>();
+        avatarHealthController = GetComponent<HealthController>();
+        avatarHealthController.OnDead += OnDeath;
     }
 
     private void Start()
@@ -139,7 +148,26 @@ public class AvatarControl : NetworkBehaviour
         animatorController.InitAnimator();
 
         personInfo = avatarPerson.GetComponent<PersonInfo>();
-
-        avatarWeaponController.Init(personInfo);
+        avatarWeaponController.Init(personInfo);       
     }  
+
+
+    private void OnDeath()
+    {
+        animatorController.SetBool("Death", true);
+        animatorController.SetTrigger("Dying");
+
+        avatarCollider.enabled = false;
+        OnDefeat?.Invoke();
+    }
+
+    /// <summary>
+    /// Возрождение
+    /// </summary>
+    public void Revive()
+    {
+        animatorController.SetBool("Death", false);      
+
+        avatarCollider.enabled = true;
+    }
 }

@@ -1,11 +1,14 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿
 using UnityEngine;
 using UnityEngine.Networking;
 
+/// <summary>
+/// Контроллер здоровья
+/// </summary>
 public class HealthController : NetworkBehaviour, IDamagable
 {
     public UnityEngine.Events.UnityAction<int> OnHit = null;
+    public UnityEngine.Events.UnityAction OnDead = null;
 
     [SyncVar]
     [SerializeField]
@@ -14,6 +17,9 @@ public class HealthController : NetworkBehaviour, IDamagable
     [SyncVar(hook="OnHealthChanged")]
     private int currentHealth;  
     
+    /// <summary>
+    /// Макисмальное здоровье
+    /// </summary>
     public int MaxHealth
     {
         get
@@ -33,9 +39,6 @@ public class HealthController : NetworkBehaviour, IDamagable
     /// <param name="hitData"></param>
     public void TakeHit(HitData hitData)
     {
-        
-       
-        //if (isServer == false)
         {
             Debug.Log(name + " hit damage " + hitData.Damage);
             currentHealth = currentHealth - (int)hitData.Damage;
@@ -43,16 +46,19 @@ public class HealthController : NetworkBehaviour, IDamagable
             {
 
                 currentHealth = 0;
+
+                OnDead?.Invoke();
             }
             if (OnHit != null)
                 OnHit(currentHealth);
         }
-    }  
+    }
 
     private void OnHealthChanged(int health)
     {
         currentHealth = health;
     }
+
     private void Awake()
     {
         currentHealth = maxHealth;

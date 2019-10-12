@@ -15,7 +15,7 @@ public class PlayerController : NetworkBehaviour
 
     [SerializeField]
     private AvatarData avatarData;
-
+    private AvatarControl avatarControl;
     private UserControlInput userControlInput;
   
     [SyncVar]
@@ -94,11 +94,13 @@ public class PlayerController : NetworkBehaviour
             UnityStandardAssets.Utility.FollowTarget camera = GameObject.FindObjectOfType<UnityStandardAssets.Utility.FollowTarget>();
             camera.target = spawnedPlayerAvatar.transform;
 
-            AvatarControl avatarControl = spawnedPlayerAvatar.GetComponent<AvatarControl>();
+            avatarControl = spawnedPlayerAvatar.GetComponent<AvatarControl>();
             if (avatarControl != null)
             {               
                 userControlInput.SetAvatarControl(avatarControl);
-                avatarControl.SetAvatarPerson(spawnedPlayerPerson);                
+                avatarControl.SetAvatarPerson(spawnedPlayerPerson);
+
+                avatarControl.OnDefeat += YouDefeat;
             }
         }     
     }   
@@ -112,5 +114,17 @@ public class PlayerController : NetworkBehaviour
     private void OnDisable()
     {
         Destroy(spawnedPlayerAvatar);
-    }  
+    } 
+    
+    private void YouDefeat()
+    {
+        //TODO ShowUI
+    }
+
+    private void Respawn()
+    {
+        //TODO UpdateUI
+        //Translate to respawn point
+        avatarControl.Revive();
+    }
 }
