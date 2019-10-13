@@ -14,6 +14,7 @@ using UnityEngine.Networking;
 [RequireComponent(typeof(Collider))]
 public class AvatarControl : NetworkBehaviour
 {
+    public UnityAction<GameObject> OnAvatarSpawn;
 
     public UnityAction OnDefeat;
     private GameObject avatarPerson;
@@ -47,6 +48,7 @@ public class AvatarControl : NetworkBehaviour
     /// <param name="move"></param>
     public void SetMovement(Vector2 move)
     {
+
         Vector3 move3d = new Vector3(move.x, 0, move.y);
 
         if (move3d.magnitude > 1f)
@@ -125,7 +127,8 @@ public class AvatarControl : NetworkBehaviour
     /// <param name="person"></param>
     public void SetAvatarPerson(GameObject person)
     {
-        avatarPerson = person;       
+        avatarPerson = person;
+        OnAvatarSpawn(avatarPerson);
     }
 
     private void Awake()
@@ -140,15 +143,24 @@ public class AvatarControl : NetworkBehaviour
 
     private void Start()
     {             
-        if (transform.childCount > 0)
+        if (transform.childCount > 0 && avatarPerson == null)
         {
             avatarPerson = transform.GetChild(0).gameObject;
+            OnAvatarSpawn(avatarPerson);
         }
-
+        
         animatorController.InitAnimator();
 
+
         personInfo = avatarPerson.GetComponent<PersonInfo>();
-        avatarWeaponController.Init(personInfo);       
+        avatarWeaponController.Init(personInfo);
+
+        OnAvatarSpawn(avatarPerson);
+
+        if (isLocalPlayer)
+        {
+            HealthInfoController.OnSetHealth(avatarHealthController);
+        }
     }  
 
 
