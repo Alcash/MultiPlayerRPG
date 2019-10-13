@@ -22,7 +22,9 @@ public class HideSelf : MonoBehaviour, IHidable
 
     private void Awake()
     {
-        GetComponent<AvatarControl>().OnAvatarSpawn += Init;
+        AvatarControl avatarControl = GetComponent<AvatarControl>();
+        Init(avatarControl.AvatarPerson);
+        avatarControl.OnAvatarSpawn += Init;     
     }
 
     private void Init(GameObject _avatar)
