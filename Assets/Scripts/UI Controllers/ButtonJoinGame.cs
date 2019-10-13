@@ -17,7 +17,7 @@ public class ButtonJoinGame : BaseButtonController
     protected override void Awake()
     {
         base.Awake();
-        inputFieldAddres.text = GameNetworkManager.singleton.networkAddress + ":" + GameNetworkManager.singleton.networkPort;
+        inputFieldAddres.text = GameNetworkManager.singleton.networkAddress;
         inputFieldAddres.onEndEdit.AddListener(CheckInput);
     }
 

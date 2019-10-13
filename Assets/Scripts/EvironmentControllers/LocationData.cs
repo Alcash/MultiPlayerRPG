@@ -1,18 +1,16 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 /// <summary>
 /// Информация о локации
 /// </summary>
 [CreateAssetMenu(fileName = "LocationData", menuName = "ScriptableObject/Location Data", order = 51)]
-public class LocationData : MonoBehaviour
+public class LocationData : ScriptableObject
 {
     [SerializeField]
     private GameObject locationPrefab;
 
     /// <summary>
-    /// Префаб аватара
+    /// Префаб локации
     /// </summary>
     public GameObject LocationPrefab
     {
@@ -23,12 +21,12 @@ public class LocationData : MonoBehaviour
     }
 
     [SerializeField]
-    private GameObject locationName;
+    private string locationName;
 
     /// <summary>
-    /// Префаб аватара
+    /// название локации
     /// </summary>
-    public GameObject LocationName
+    public string LocationName
     {
         get
         {

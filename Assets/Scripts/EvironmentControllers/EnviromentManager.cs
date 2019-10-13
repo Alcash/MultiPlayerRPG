@@ -1,18 +1,29 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class EnviromentManager : MonoBehaviour
+/// <summary>
+/// менеджер локаций
+/// </summary>
+public class EnviromentManager : NetworkBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField]
+    private LocationData[] locationDatas;
+
+    [SyncVar]
+    private int index;
+
+    public override void OnStartServer()
     {
-        
+        int index = Random.Range(0, locationDatas.Length);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Start()
     {
-        
+        if(isClient)
+        {
+            Instantiate(locationDatas[index].LocationPrefab, transform);
+        }
     }
 }

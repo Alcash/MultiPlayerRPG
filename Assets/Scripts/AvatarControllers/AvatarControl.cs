@@ -14,7 +14,6 @@ using UnityEngine.Networking;
 public class AvatarControl : NetworkBehaviour
 {
     public UnityAction<GameObject> OnAvatarSpawn;
-
     public UnityAction OnDefeat;
     private GameObject avatarPerson;
     private Rigidbody avatarRigidbody;
@@ -163,12 +162,17 @@ public class AvatarControl : NetworkBehaviour
 
         OnAvatarSpawn(avatarPerson);
 
-        if (isLocalPlayer)
+        if (hasAuthority)
         {
             HealthInfoController.OnSetHealth(avatarHealthController);
         }
-    }  
 
+    }
+
+    public override void OnStartAuthority()
+    {
+        HealthInfoController.OnSetHealth(avatarHealthController);
+    }
 
     private void OnDeath()
     {        

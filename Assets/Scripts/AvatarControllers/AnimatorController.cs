@@ -20,13 +20,11 @@ public class AnimatorController : MonoBehaviour
         InitAnimator(avatarControl.AvatarPerson);
         avatarControl.OnAvatarSpawn += InitAnimator;
         avatarControl.OnDefeat += OnDeath;
-
-
     }
 
     public void InitAnimator(GameObject avatar)
     {
-        if (avatar == null)
+        if (avatar != null)
         {
             avatarAnimator = avatar.GetComponent<Animator>();
             networkAnimator = avatar.GetComponent<NetworkAnimator>();
