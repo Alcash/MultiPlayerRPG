@@ -25,7 +25,7 @@ public class HealthInfoController : MonoBehaviour
     {
         healthController = _healthController;
 
-        healthController.OnHit += SetNewValue;
+        healthController.OnHealthChanged += SetNewValue;
     }
 
     private void SetNewValue(int value)

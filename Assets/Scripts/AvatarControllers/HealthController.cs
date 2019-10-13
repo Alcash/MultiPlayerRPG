@@ -9,12 +9,13 @@ public class HealthController : NetworkBehaviour, IDamagable
 {
     public UnityEngine.Events.UnityAction<int> OnHit = null;
     public UnityEngine.Events.UnityAction OnDead = null;
+    public UnityEngine.Events.UnityAction<int> OnHealthChanged = null;
 
     [SyncVar]
     [SerializeField]
     private int maxHealth;
 
-    [SyncVar(hook="OnHealthChanged")]
+    [SyncVar(hook="OnHealthChangedHook")]
     private int currentHealth;  
     
     /// <summary>
@@ -54,9 +55,10 @@ public class HealthController : NetworkBehaviour, IDamagable
         }
     }
 
-    private void OnHealthChanged(int health)
+    private void OnHealthChangedHook(int health)
     {
         currentHealth = health;
+        OnHealthChanged?.Invoke(currentHealth);
     }
 
     private void Awake()

@@ -16,6 +16,10 @@ public class ShotgunWeaponController : BaseWeaponController
         Collider[] enemyCollider = Physics.OverlapSphere(transform.position, weaponData.RangeAttack, LayerMask.GetMask("Avatar"));
         for (int i = 0; i < enemyCollider.Length; i++)
         {
+            if(enemyCollider[i].gameObject == avatarOwner.gameObject)
+            {
+                continue;
+            }
             var enemy = enemyCollider[i].GetComponent<IDamagable>();
 
             var vector3ToEnemy = enemyCollider[i].transform.position - transform.position;

@@ -8,14 +8,12 @@ using UnityEngine.Networking;
 /// Контроллер действий аватара
 /// </summary>
 [RequireComponent(typeof(Rigidbody))]
-[RequireComponent(typeof(AnimatorController))]
 [RequireComponent(typeof(AvatarWeaponController))]
 [RequireComponent(typeof(HealthController))]
 [RequireComponent(typeof(Collider))]
 public class AvatarControl : NetworkBehaviour
 {
     public UnityAction<GameObject> OnAvatarSpawn;
-
     public UnityAction OnDefeat;
     private GameObject avatarPerson;
     private Rigidbody avatarRigidbody;
@@ -40,6 +38,16 @@ public class AvatarControl : NetworkBehaviour
 
     private PersonInfo personInfo;
 
+    /// <summary>
+    /// персонаж аватара
+    /// </summary>
+    public GameObject AvatarPerson
+    {
+        get
+        {
+            return avatarPerson;
+        }
+    }
   
 
     /// <summary>
@@ -148,27 +156,26 @@ public class AvatarControl : NetworkBehaviour
             avatarPerson = transform.GetChild(0).gameObject;
             OnAvatarSpawn(avatarPerson);
         }
-        
-        animatorController.InitAnimator();
-
 
         personInfo = avatarPerson.GetComponent<PersonInfo>();
         avatarWeaponController.Init(personInfo);
 
         OnAvatarSpawn(avatarPerson);
 
-        if (isLocalPlayer)
+        if (hasAuthority)
         {
             HealthInfoController.OnSetHealth(avatarHealthController);
         }
-    }  
 
+    }
+
+    public override void OnStartAuthority()
+    {
+        HealthInfoController.OnSetHealth(avatarHealthController);
+    }
 
     private void OnDeath()
-    {
-        animatorController.SetBool("Death", true);
-        animatorController.SetTrigger("Dying");
-
+    {        
         avatarCollider.enabled = false;
         OnDefeat?.Invoke();
     }

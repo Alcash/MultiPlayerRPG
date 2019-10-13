@@ -32,10 +32,8 @@ public class AvatarChangeManager : MonoBehaviour
             avatar.SetActive(false);
         }
         if(spawnedAvatars.ContainsKey(avatarData.name))
-        {
-            avatar.SetActive(false);
-            avatar = spawnedAvatars[avatarData.name].gameObject;
-           
+        {            
+            avatar = spawnedAvatars[avatarData.name].gameObject;           
         }
         else
         {
