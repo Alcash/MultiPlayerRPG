@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Collections;
 
-public class JoystickController : MonoBehaviour, IDragHandler, IPointerUpHandler, IPointerDownHandler
+public class JoystickController : MonoBehaviour, IDragHandler, IPointerUpHandler, IPointerDownHandler,IEndDragHandler
 {
     [Tooltip("When checked, this joystick will stay in a fixed position.")]
     public bool joystickStaysInFixedPosition = false;
@@ -17,6 +17,7 @@ public class JoystickController : MonoBehaviour, IDragHandler, IPointerUpHandler
     private Vector3[] fourCornersArray = new Vector3[4]; // used to get the bottom right corner of the image in order to ensure that the pivot of the joystick's background image is always at the bottom right corner of the image (the pivot must always be placed on the bottom right corner of the joystick's background image in order to the script to work)
     private Vector2 bgImageStartPosition; // used to temporarily store the starting position of the joystick's background image (where it was placed on the canvas in the editor before play was pressed) in order to set the image back to this same position after setting the pivot to the bottom right corner of the image
 
+    private bool isTouchUp = false;
     private bool isTouch = false;
     [SerializeField]
     private float delayToTouch = 1;
@@ -58,7 +59,7 @@ public class JoystickController : MonoBehaviour, IDragHandler, IPointerUpHandler
         // if the point touched on the screen is within the background image of this joystick
         if (RectTransformUtility.ScreenPointToLocalPointInRectangle(bgImage.rectTransform, ped.position, ped.pressEventCamera, out localPoint))
         {
-          
+            joystickKnobImage.enabled = true;
             localPoint.x = (localPoint.x / bgImage.rectTransform.sizeDelta.x);
             localPoint.y = (localPoint.y / bgImage.rectTransform.sizeDelta.y);
             
@@ -79,8 +80,9 @@ public class JoystickController : MonoBehaviour, IDragHandler, IPointerUpHandler
     // this event happens when there is a touch down (or mouse pointer down) on the screen
     public virtual void OnPointerDown(PointerEventData ped)
     {
+        isTouchUp = false;
         isTouch = true;
-        OnDrag(ped); // sent the event data to the OnDrag event
+       // OnDrag(ped); // sent the event data to the OnDrag event
 
         StartCoroutine(StartWaitEndShowHandler());
     }
@@ -90,15 +92,15 @@ public class JoystickController : MonoBehaviour, IDragHandler, IPointerUpHandler
     {
         inputVector = Vector3.zero; // resets the inputVector so that output will no longer affect movement of the game object (example, a player character or any desired game object)
         joystickKnobImage.rectTransform.anchoredPosition = Vector3.zero; // resets the handle ("knob") of this joystick back to the center
+        isTouchUp = true;
         isTouch = false;
-
-        joystickKnobImage.enabled = delayToTouch == 0;
+        joystickKnobImage.enabled = (delayToTouch > 0) == false;
     }
 
     // ouputs the direction vector, use this public function from another script to control movement of a game object (such as a player character or any desired game object)
     public Vector3 GetInputDirection()
     {
-        return new Vector3(inputVector.x, inputVector.y, 0);
+        return new Vector3(-inputVector.x, -inputVector.y, 0);
     }
 
     /// <summary>
@@ -107,7 +109,12 @@ public class JoystickController : MonoBehaviour, IDragHandler, IPointerUpHandler
     /// <returns></returns>
     public bool GetTouch()
     {
-        return isTouch;
+        if(isTouchUp)
+        {
+            isTouchUp = false;
+            return true;
+        }
+        return false;
     }
 
     private IEnumerator StartWaitEndShowHandler()
@@ -120,8 +127,13 @@ public class JoystickController : MonoBehaviour, IDragHandler, IPointerUpHandler
             yield return new WaitForFixedUpdate();
         }
 
-        joystickKnobImage.enabled = true;
+        joystickKnobImage.enabled = isTouch;
 
         yield return null;
+    }
+
+    public void OnEndDrag(PointerEventData eventData)
+    {
+        joystickKnobImage.enabled = delayToTouch == 0;
     }
 }

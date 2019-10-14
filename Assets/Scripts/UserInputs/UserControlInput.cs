@@ -40,9 +40,8 @@ public class UserControlInput : MonoBehaviour
     }
 
     private void Start()
-    {
+    {        
         userInput = gameObject.GetComponent<IUserInput>();
-
         this.enabled = userInput != null;
     }
 }

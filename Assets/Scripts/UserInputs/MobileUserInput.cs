@@ -25,12 +25,12 @@ public class MobileUserInput : MonoBehaviour,IUserInput
        return attackJoystick.GetTouch();
     }
 
-    private void Awake()
+   /* private void Awake()
     {
 #if !UNITY_IPHONE || !UNITY_ANDROID
         Destroy(GetComponent<MobileUserInput>());
 #endif
-    }
+    }*/
     
     private void Start()
     {
@@ -39,7 +39,7 @@ public class MobileUserInput : MonoBehaviour,IUserInput
         if(holder != null)
         {
             moveJoystick = holder.LeftJoystick;
-            attackJoystick = holder.LeftJoystick;
+            attackJoystick = holder.RightJoystick;
         }
         else
         {
