@@ -41,8 +41,8 @@ public class UserControlInput : MonoBehaviour
 
     private void Start()
     {
-#if UNITY_EDITOR || UNITY_STANDALONE
-        userInput = gameObject.AddComponent<DesktopUserInput>();
-#endif      
-    }    
+        userInput = gameObject.GetComponent<IUserInput>();
+
+        this.enabled = userInput != null;
+    }
 }
