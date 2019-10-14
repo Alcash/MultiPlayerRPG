@@ -47,4 +47,12 @@ public class DesktopUserInput : MonoBehaviour , IUserInput
     {
         return Input.GetKeyUp(KeyCode.Space) || Input.GetMouseButtonUp(0);
     }
+
+    private void Awake()
+    {
+
+#if !UNITY_EDITOR || !UNITY_STANDALONE
+        Destroy(GetComponent<DesktopUserInput>());
+#endif
+    }
 }
