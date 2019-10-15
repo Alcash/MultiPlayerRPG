@@ -38,6 +38,8 @@ public class AvatarControl : NetworkBehaviour
 
     private PersonInfo personInfo;
 
+    private int fragCount = 0;
+
     /// <summary>
     /// персонаж аватара
     /// </summary>
@@ -144,6 +146,7 @@ public class AvatarControl : NetworkBehaviour
         avatarRigidbody = GetComponent<Rigidbody>();
         animatorController = GetComponent<AnimatorController>();
         avatarWeaponController = GetComponent<AvatarWeaponController>();
+        avatarWeaponController.OnKilledObject += KillObject;
         avatarCollider = GetComponent<Collider>();
         avatarHealthController = GetComponent<HealthController>();
         avatarHealthController.OnDead += OnDeath;
@@ -175,18 +178,42 @@ public class AvatarControl : NetworkBehaviour
     }
 
     private void OnDeath()
-    {        
+    {
+        RpcDeath();
+    }
+
+    [ClientRpc]
+    private void RpcDeath()
+    {
         avatarCollider.enabled = false;
+        Debug.Log("OnDeath");
         OnDefeat?.Invoke();
     }
 
     /// <summary>
     /// Возрождение
     /// </summary>
-    public void Revive()
+    //[ClientRpc]
+    public void RpcRevive(Vector3 position)
     {
-        animatorController.SetBool("Death", false);      
-
+        transform.position = position;
+        animatorController.SetBool("Death", false);
+        avatarHealthController.Revive();
         avatarCollider.enabled = true;
+    }
+   
+    private void KillObject()
+    {
+        RpcKillObject();
+    }
+
+    [ClientRpc]
+    private void RpcKillObject()
+    {
+        if (hasAuthority)
+        {
+            fragCount++;
+            FragsInfoController.OnFragCount(fragCount);
+        }
     }
 }
