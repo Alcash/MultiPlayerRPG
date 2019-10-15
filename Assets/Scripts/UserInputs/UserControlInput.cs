@@ -1,14 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿
 using UnityEngine;
 
 /// <summary>
 /// Контроллер ввода управления игрока
 /// </summary>
 public class UserControlInput : MonoBehaviour
-{
-    [SerializeField]
-    private IUserInput userInput;
+{    
+    private BaseUserInput userInput;
 
     private AvatarControl avatarControl;
 
@@ -30,13 +28,9 @@ public class UserControlInput : MonoBehaviour
     {
         if (userInput == null || avatarControl == null)
         {
-            return;
-        }        
-
-        if (userInput.Exist() == false)
-        {
             FindInput();
-        }
+            return;
+        }   
 
         Vector2 movement = userInput.GetMovement();
         bool shootOnce = userInput.GetShoot();
@@ -52,7 +46,7 @@ public class UserControlInput : MonoBehaviour
 
     private void FindInput()
     {
-        userInput = gameObject.GetComponent<IUserInput>();
+        userInput = gameObject.GetComponent<BaseUserInput>();
         this.enabled = userInput != null;
     }
 }

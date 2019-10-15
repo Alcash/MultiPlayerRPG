@@ -5,36 +5,34 @@ using UnityEngine;
 /// <summary>
 /// Мобильное управление
 /// </summary>
-public class MobileUserInput : MonoBehaviour,IUserInput
+public class MobileUserInput : BaseUserInput
 {    
     private JoystickController moveJoystick;    
     private JoystickController attackJoystick;
-
-    public bool Exist()
-    {
-        try
-        {
-            if (gameObject != null)
-                return true;
-        }
-        catch
-        {
-            return false;
-        }
-        return false;
-    }
-
-    public Vector2 GetAttackDirection()
+        
+    /// <summary>
+    /// Возвращает направление атаки
+    /// </summary>
+    /// <returns></returns>
+    public override Vector2 GetAttackDirection()
     {
         return attackJoystick.GetInputDirection(-1);
     }
 
-    public Vector2 GetMovement()
+    /// <summary>
+    /// Возвращает направление движения
+    /// </summary>
+    /// <returns></returns>
+    public override Vector2 GetMovement()
     {
         return moveJoystick.GetInputDirection();
     }
 
-    public bool GetShoot()
+    /// <summary>
+    /// Возвращает атакует ли
+    /// </summary>
+    /// <returns></returns>
+    public override bool GetShoot()
     {
        return attackJoystick.GetTouch();
     }
@@ -42,7 +40,8 @@ public class MobileUserInput : MonoBehaviour,IUserInput
     private void Awake()
     {
 #if !UNITY_IPHONE || !UNITY_ANDROID
-        Destroy(GetComponent<MobileUserInput>());
+        Destroy(FindObjectOfType<MobileInputHolder>().gameObject);
+        Destroy(GetComponent<MobileUserInput>());        
 #endif
     }
     

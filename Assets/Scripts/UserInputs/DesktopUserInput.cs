@@ -3,27 +3,14 @@
 /// <summary>
 /// Управление на компьютере
 /// </summary>
-public class DesktopUserInput : MonoBehaviour , IUserInput
-{
-    public bool Exist()
-    {
-        try
-        {
-            if (gameObject != null)
-                return true;
-        }
-        catch
-        {
-            return false;
-        }
-        return false;
-    }
+public class DesktopUserInput : BaseUserInput
+{    
 
     /// <summary>
     /// Возвращает направление атаки
     /// </summary>
     /// <returns></returns>
-    public Vector2 GetAttackDirection()
+    public override Vector2 GetAttackDirection()
     {
         Vector2 result = Vector2.zero;
         if (Input.GetMouseButton(0))
@@ -44,7 +31,7 @@ public class DesktopUserInput : MonoBehaviour , IUserInput
     /// Возвращает направление передвижения
     /// </summary>
     /// <returns></returns>
-    public Vector2 GetMovement()
+    public override Vector2 GetMovement()
     {
         float h = Input.GetAxis("Horizontal");
         float v = Input.GetAxis("Vertical");
@@ -57,7 +44,7 @@ public class DesktopUserInput : MonoBehaviour , IUserInput
     /// Возвращает стрельбу
     /// </summary>
     /// <returns></returns>
-    public bool GetShoot()
+    public override bool GetShoot()
     {
         return Input.GetKeyUp(KeyCode.Space) || Input.GetMouseButtonUp(0);
     }
