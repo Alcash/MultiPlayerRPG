@@ -10,6 +10,20 @@ public class MobileUserInput : MonoBehaviour,IUserInput
     private JoystickController moveJoystick;    
     private JoystickController attackJoystick;
 
+    public bool Exist()
+    {
+        try
+        {
+            if (gameObject != null)
+                return true;
+        }
+        catch
+        {
+            return false;
+        }
+        return false;
+    }
+
     public Vector2 GetAttackDirection()
     {
         return attackJoystick.GetInputDirection(-1);
@@ -25,12 +39,12 @@ public class MobileUserInput : MonoBehaviour,IUserInput
        return attackJoystick.GetTouch();
     }
 
-   /* private void Awake()
+    private void Awake()
     {
 #if !UNITY_IPHONE || !UNITY_ANDROID
         Destroy(GetComponent<MobileUserInput>());
 #endif
-    }*/
+    }
     
     private void Start()
     {

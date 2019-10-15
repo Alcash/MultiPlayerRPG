@@ -7,4 +7,6 @@ public interface IUserInput
     Vector2 GetAttackDirection();
 
     bool GetShoot();
+
+    bool Exist();
 }

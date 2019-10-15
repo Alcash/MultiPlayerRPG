@@ -5,6 +5,20 @@
 /// </summary>
 public class DesktopUserInput : MonoBehaviour , IUserInput
 {
+    public bool Exist()
+    {
+        try
+        {
+            if (gameObject != null)
+                return true;
+        }
+        catch
+        {
+            return false;
+        }
+        return false;
+    }
+
     /// <summary>
     /// Возвращает направление атаки
     /// </summary>

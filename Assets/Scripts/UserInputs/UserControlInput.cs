@@ -7,6 +7,7 @@ using UnityEngine;
 /// </summary>
 public class UserControlInput : MonoBehaviour
 {
+    [SerializeField]
     private IUserInput userInput;
 
     private AvatarControl avatarControl;
@@ -21,6 +22,7 @@ public class UserControlInput : MonoBehaviour
 
     private void FixedUpdate()
     {
+
         SetInput();
     }
 
@@ -29,7 +31,13 @@ public class UserControlInput : MonoBehaviour
         if (userInput == null || avatarControl == null)
         {
             return;
+        }        
+
+        if (userInput.Exist() == false)
+        {
+            FindInput();
         }
+
         Vector2 movement = userInput.GetMovement();
         bool shootOnce = userInput.GetShoot();
         avatarControl.SetShoot(directionShoot, shootOnce);
@@ -38,7 +46,12 @@ public class UserControlInput : MonoBehaviour
     }
 
     private void Start()
-    {        
+    {
+        FindInput();
+    }
+
+    private void FindInput()
+    {
         userInput = gameObject.GetComponent<IUserInput>();
         this.enabled = userInput != null;
     }
