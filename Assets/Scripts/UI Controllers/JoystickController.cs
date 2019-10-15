@@ -98,9 +98,9 @@ public class JoystickController : MonoBehaviour, IDragHandler, IPointerUpHandler
     }
 
     // ouputs the direction vector, use this public function from another script to control movement of a game object (such as a player character or any desired game object)
-    public Vector3 GetInputDirection()
+    public Vector3 GetInputDirection(int inverse = 1)
     {
-        return new Vector3(-inputVector.x, -inputVector.y, 0);
+        return new Vector3(inverse*inputVector.x, inverse*inputVector.y, 0);
     }
 
     /// <summary>

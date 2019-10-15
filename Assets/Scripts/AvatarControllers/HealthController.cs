@@ -38,7 +38,7 @@ public class HealthController : NetworkBehaviour, IDamagable
     /// Получение воздействия
     /// </summary>
     /// <param name="hitData"></param>
-    public void TakeHit(HitData hitData)
+    public bool TakeHit(HitData hitData)
     {
         {
             Debug.Log(name + " hit damage " + hitData.Damage);
@@ -49,10 +49,14 @@ public class HealthController : NetworkBehaviour, IDamagable
                 currentHealth = 0;
 
                 OnDead?.Invoke();
+
+                return true;
             }
             if (OnHit != null)
                 OnHit(currentHealth);
         }
+
+        return false;
     }
 
     private void OnHealthChangedHook(int health)
@@ -61,8 +65,14 @@ public class HealthController : NetworkBehaviour, IDamagable
         OnHealthChanged?.Invoke(currentHealth);
     }
 
-    private void Awake()
+    public void Revive()
     {
         currentHealth = maxHealth;
+        OnHealthChanged?.Invoke(currentHealth);
+    }
+
+    private void Awake()
+    {
+        Revive();
     }   
 }

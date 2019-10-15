@@ -10,7 +10,11 @@ public class CombatSystem : MonoBehaviour
     public static void CalculateDamage(IDamagable reciever, HitData hitData)
     {
       
-        reciever.TakeHit(hitData);
+        bool objectWasKilled = reciever.TakeHit(hitData);
 
+        if(objectWasKilled)
+        {
+            hitData.Owner.OnKilledObject?.Invoke();
+        }
     }   
 }

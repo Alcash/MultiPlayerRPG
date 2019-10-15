@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
+using System.Collections;
 
 /// <summary>
 /// Контроллер игрока
@@ -20,6 +21,8 @@ public class PlayerController : NetworkBehaviour
   
     [SyncVar]
     private GameObject spawnedPlayerAvatar;
+
+    private const float RESPAWN_TIME = 3;
 
     public GameObject GetSpawnedAvatar
     {
@@ -118,13 +121,13 @@ public class PlayerController : NetworkBehaviour
     
     private void YouDefeat()
     {
-        //TODO ShowUI
-    }
+        StartCoroutine(WaitToRespawn());
+    }   
 
-    private void Respawn()
+    private IEnumerator WaitToRespawn()
     {
-        //TODO UpdateUI
-        //Translate to respawn point
-        avatarControl.Revive();
-    }
+        yield return new WaitForSeconds(RESPAWN_TIME);
+        avatarControl.RpcRevive(transform.position);
+    } 
+   
 }

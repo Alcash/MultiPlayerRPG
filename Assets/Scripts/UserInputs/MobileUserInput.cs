@@ -12,7 +12,7 @@ public class MobileUserInput : MonoBehaviour,IUserInput
 
     public Vector2 GetAttackDirection()
     {
-        return attackJoystick.GetInputDirection();
+        return attackJoystick.GetInputDirection(-1);
     }
 
     public Vector2 GetMovement()
