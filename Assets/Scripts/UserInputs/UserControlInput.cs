@@ -32,10 +32,8 @@ public class UserControlInput : MonoBehaviour
         }
         Vector2 movement = userInput.GetMovement();
         bool shootOnce = userInput.GetShoot();
-
         avatarControl.SetShoot(directionShoot, shootOnce);
-        avatarControl.SetMovement(movement);
-
+        avatarControl.SetMovement(movement);       
         directionShoot = userInput.GetAttackDirection();
     }
 
