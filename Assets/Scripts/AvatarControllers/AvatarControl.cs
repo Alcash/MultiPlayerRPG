@@ -105,7 +105,11 @@ public class AvatarControl : NetworkBehaviour
         {
             animatorController.SetTrigger("Shoot");
             avatarWeaponController.Shoot();
-        }        
+        }   
+        
+        
+        animatorController.SetBool("Aiming", isShoot == false && aimDirection != Vector2.zero);
+        
     }
 
     private void Moving()
@@ -115,17 +119,29 @@ public class AvatarControl : NetworkBehaviour
             moveDirection.Normalize();
         }
 
-        moveDirection = transform.InverseTransformDirection(moveDirection);
-        moveDirection = Vector3.ProjectOnPlane(moveDirection, Vector3.up);
+        Vector3 resultVelocity = Vector3.zero;
 
-        forwardAmount = 0;
-        if (moveDirection.magnitude > 0.01f)
+        if (isAiming == false)
+        {           
+            moveDirection = transform.InverseTransformDirection(moveDirection);
+            moveDirection = Vector3.ProjectOnPlane(moveDirection, Vector3.up);
+            resultVelocity = transform.forward * moveDirection.magnitude;
+        }
+        else
         {
-            forwardAmount = moveDirection.magnitude;
+           
+            resultVelocity = -moveDirection;
         }
 
-        avatarRigidbody.velocity = transform.forward * forwardAmount * moveSpeedMultiplier;
+        forwardAmount = 0;
+        if (resultVelocity.magnitude > 0.01f)
+        {
+            forwardAmount = resultVelocity.magnitude;
+        }
 
+        avatarRigidbody.velocity = resultVelocity * forwardAmount * moveSpeedMultiplier;
+       
+       
         animatorController.SetFloat("Forward", forwardAmount, 0.1f, Time.fixedDeltaTime);        
     }
 
