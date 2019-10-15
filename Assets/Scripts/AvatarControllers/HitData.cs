@@ -9,7 +9,7 @@ public struct HitData
 {   
     private float damage;
 
-    private AvatarWeaponController owner;
+   
 
     public float Damage
     {
@@ -19,9 +19,19 @@ public struct HitData
         }
     }
 
+    private AvatarWeaponController owner;
+
+    public AvatarWeaponController Owner
+    {
+        get
+        {
+            return owner;
+        }
+    }
+
     public HitData(float _damage, AvatarWeaponController _owner)
     {
         damage = _damage;
         owner = _owner;
-    }
+    }    
 }

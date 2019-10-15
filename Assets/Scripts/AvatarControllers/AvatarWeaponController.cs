@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.Networking;
 
 /// <summary>
@@ -9,11 +10,11 @@ using UnityEngine.Networking;
 /// </summary>
 public class AvatarWeaponController : NetworkBehaviour
 {
+    public UnityAction OnKilledObject;
     [SerializeField]
     private WeaponData defaultWeapon;    
     private BaseWeaponController weaponController;  
-       
-
+        
     public void Shoot()
     {
         //weaponController?.Shoot();

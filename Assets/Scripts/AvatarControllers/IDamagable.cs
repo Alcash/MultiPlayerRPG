@@ -4,5 +4,5 @@ using UnityEngine;
 
 public interface IDamagable
 {
-    void TakeHit(HitData hitData);
+    bool TakeHit(HitData hitData);
 }

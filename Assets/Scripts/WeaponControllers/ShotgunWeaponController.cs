@@ -22,14 +22,20 @@ public class ShotgunWeaponController : BaseWeaponController
             }
             var enemy = enemyCollider[i].GetComponent<IDamagable>();
 
-            var vector3ToEnemy = enemyCollider[i].transform.position - transform.position;
-            var angle = Vector3.Angle(transform.forward, vector3ToEnemy);
-            if (angle < weaponData.AttackSector / 2 && enemy != null)
+            RaycastHit raycastHit;
+
+            Physics.Raycast(transform.position, enemyCollider[i].transform.position - transform.position, out raycastHit);           
+            if (raycastHit.collider == enemyCollider[i])
             {
-               
-                enemyList.Add(enemy);               
-                
-                CombatSystem.CalculateDamage(enemy, hitData);
+                var vector3ToEnemy = enemyCollider[i].transform.position - transform.position;
+                var angle = Vector3.Angle(transform.forward, vector3ToEnemy);
+                if (angle < weaponData.AttackSector / 2 && enemy != null)
+                {
+
+                    enemyList.Add(enemy);
+
+                    CombatSystem.CalculateDamage(enemy, hitData);
+                }
             }
         }
     }

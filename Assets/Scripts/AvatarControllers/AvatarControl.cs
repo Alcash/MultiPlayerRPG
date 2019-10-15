@@ -37,6 +37,12 @@ public class AvatarControl : NetworkBehaviour
     private float forwardAmount;
 
     private PersonInfo personInfo;
+    private int fragCount = 0;
+
+    private Vector2 aimDirection;
+    private bool isShoot;
+    private bool isAiming;
+    private Vector3 moveDirection;
 
     /// <summary>
     /// персонаж аватара
@@ -56,33 +62,7 @@ public class AvatarControl : NetworkBehaviour
     /// <param name="move"></param>
     public void SetMovement(Vector2 move)
     {
-
-        Vector3 move3d = new Vector3(move.x, 0, move.y);
-
-        if (move3d.magnitude > 1f)
-        {
-            move3d.Normalize();
-        }
-
-        move3d = transform.InverseTransformDirection(move3d);
-        move3d = Vector3.ProjectOnPlane(move3d, Vector3.up);
-
-        forwardAmount = 0;
-
-
-        if (move3d.magnitude > 0.01)
-        {
-            turnAmount = Mathf.Atan2(-move3d.x, -move3d.z);
-            transform.Rotate(0, turnAmount * movingTurnSpeed * Time.deltaTime, 0);
-
-            forwardAmount = move3d.magnitude;
-        }
-
-        avatarRigidbody.velocity = transform.forward * forwardAmount * moveSpeedMultiplier;
-
-        animatorController.SetFloat("Forward", forwardAmount, 0.1f, Time.fixedDeltaTime);
-        animatorController.SetFloat("Turn", turnAmount, 0.1f, Time.fixedDeltaTime);
-
+        moveDirection = new Vector3(move.x, 0, move.y);
     }
 
     /// <summary>
@@ -92,41 +72,98 @@ public class AvatarControl : NetworkBehaviour
     /// <param name="shoot"></param>
     public void SetShoot(Vector2 direction, bool shoot)
     {
-        animatorController.SetBool("Aiming", shoot == false && direction != Vector2.zero);
+        aimDirection = direction;
 
-        if (shoot && direction != Vector2.zero)
+        isShoot = shoot;       
+    }
+
+    private void FixedUpdate()
+    {
+        Aiming();
+
+        Moving();
+
+        Rotating();
+    }
+
+    private void Aiming()
+    {       
+        isAiming = false;
+        if (isShoot && aimDirection != Vector2.zero)
         {
             animatorController.SetTrigger("Shoot");
-            avatarWeaponController.Shoot();            
+            avatarWeaponController.Shoot();
         }
 
-        if (shoot == false && direction != Vector2.zero)
+        if (isShoot == false && aimDirection != Vector2.zero)
         {
+            animatorController.SetBool("Aiming", isShoot == false && aimDirection != Vector2.zero);
+            isAiming = true;
+        }
 
-            animatorController.SetBool("Aiming", shoot == false && direction != Vector2.zero);
+        if (isShoot && aimDirection == Vector2.zero)
+        {
+            animatorController.SetTrigger("Shoot");
+            avatarWeaponController.Shoot();
+        }   
+        
+        
+        animatorController.SetBool("Aiming", isShoot == false && aimDirection != Vector2.zero);
+        
+    }
 
-            Vector3 vector = new Vector3(direction.x, 0, direction.y);
+    private void Moving()
+    {
+        if (moveDirection.magnitude > 1f)
+        {
+            moveDirection.Normalize();
+        }
+
+        Vector3 resultVelocity = Vector3.zero;
+
+        if (isAiming == false)
+        {           
+            moveDirection = transform.InverseTransformDirection(moveDirection);
+            moveDirection = Vector3.ProjectOnPlane(moveDirection, Vector3.up);
+            resultVelocity = transform.forward * moveDirection.magnitude;
+        }
+        else
+        {
+           
+            resultVelocity = -moveDirection;
+        }
+
+        forwardAmount = 0;
+        if (resultVelocity.magnitude > 0.01f)
+        {
+            forwardAmount = resultVelocity.magnitude;
+        }
+
+        avatarRigidbody.velocity = resultVelocity * forwardAmount * moveSpeedMultiplier;
+       
+       
+        animatorController.SetFloat("Forward", forwardAmount, 0.1f, Time.fixedDeltaTime);        
+    }
+
+    private void Rotating()
+    {
+        if(isAiming)
+        {
+            Vector3 vector = new Vector3(aimDirection.x, 0, aimDirection.y);
 
             vector = transform.InverseTransformDirection(vector);
             vector = Vector3.ProjectOnPlane(vector, Vector3.up);
-
             turnAmount = Mathf.Atan2(vector.x, vector.z);
-
             transform.Rotate(0, turnAmount * movingTurnSpeed * Time.deltaTime, 0);
-
-            animatorController.SetFloat("Turn", turnAmount, 0.1f, Time.fixedDeltaTime);
         }
-
-        if (shoot && direction == Vector2.zero)
+        else 
+        if (moveDirection.magnitude > 0.01)
         {
-            animatorController.SetTrigger("Shoot");
-            avatarWeaponController.Shoot();          
-        }
+            turnAmount = Mathf.Atan2(-moveDirection.x, -moveDirection.z);
+            transform.Rotate(0, turnAmount * movingTurnSpeed * Time.deltaTime, 0);  
+        }      
 
-        if (shoot == false && direction == Vector2.zero)
-        {
-           
-        }
+        animatorController.SetFloat("Turn", turnAmount, 0.1f, Time.fixedDeltaTime);
     }
 
     /// <summary>
@@ -144,6 +181,7 @@ public class AvatarControl : NetworkBehaviour
         avatarRigidbody = GetComponent<Rigidbody>();
         animatorController = GetComponent<AnimatorController>();
         avatarWeaponController = GetComponent<AvatarWeaponController>();
+        avatarWeaponController.OnKilledObject += KillObject;
         avatarCollider = GetComponent<Collider>();
         avatarHealthController = GetComponent<HealthController>();
         avatarHealthController.OnDead += OnDeath;
@@ -175,18 +213,42 @@ public class AvatarControl : NetworkBehaviour
     }
 
     private void OnDeath()
-    {        
+    {
+        RpcDeath();
+    }
+
+    [ClientRpc]
+    private void RpcDeath()
+    {
         avatarCollider.enabled = false;
+        Debug.Log("OnDeath");
         OnDefeat?.Invoke();
     }
 
     /// <summary>
     /// Возрождение
     /// </summary>
-    public void Revive()
+    //[ClientRpc]
+    public void RpcRevive(Vector3 position)
     {
-        animatorController.SetBool("Death", false);      
-
+        transform.position = position;
+        animatorController.SetBool("Death", false);
+        avatarHealthController.Revive();
         avatarCollider.enabled = true;
+    }
+   
+    private void KillObject()
+    {
+        RpcKillObject();
+    }
+
+    [ClientRpc]
+    private void RpcKillObject()
+    {
+        if (hasAuthority)
+        {
+            fragCount++;
+            FragsInfoController.OnFragCount(fragCount);
+        }
     }
 }
