@@ -39,7 +39,7 @@ public class MobileUserInput : BaseUserInput
 
     private void Awake()
     {
-#if !UNITY_IPHONE || !UNITY_ANDROID
+#if (!UNITY_IPHONE || !UNITY_ANDROID) && !UNITY_EDITOR
         Destroy(FindObjectOfType<MobileInputHolder>().gameObject);
         Destroy(GetComponent<MobileUserInput>());        
 #endif

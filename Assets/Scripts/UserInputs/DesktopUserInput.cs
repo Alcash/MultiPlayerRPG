@@ -52,7 +52,7 @@ public class DesktopUserInput : BaseUserInput
     private void Awake()
     {
 
-#if !UNITY_EDITOR || !UNITY_STANDALONE
+#if !UNITY_EDITOR && !UNITY_STANDALONE
         Destroy(GetComponent<DesktopUserInput>());
 #endif
     }
